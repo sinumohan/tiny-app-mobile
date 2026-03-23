@@ -27,17 +27,34 @@ import { typography, fontSizes } from '../../../src/lib/typography';
 
 type WizardStep = 'hypothesis' | 'brand' | 'results' | 'review';
 
-function computeMSS(visitors: number, conversions: number, spend: number): number {
-  if (visitors === 0) return 0;
-  const cvr = conversions / visitors;
-  const cpa = spend > 0 ? spend / Math.max(conversions, 1) : 0;
-  // Simplified MSS formula
-  let score = Math.min(cvr * 200, 60); // CVR component (max 60)
-  if (cpa > 0 && cpa < 50) score += 20;
-  else if (cpa > 0 && cpa < 100) score += 10;
-  if (visitors >= 100) score += 10;
-  if (visitors >= 500) score += 10;
-  return Math.min(Math.round(score), 100);
+function computeMSS(inputs: {
+  visitors: number;
+  conversions: number;
+  spend: number;
+  audienceMatchRating: number; // 1-5
+  intentAlignmentRating: number; // 1-5
+  engagementRating: number; // 1-5
+}): number {
+  const { visitors, conversions, spend, audienceMatchRating, intentAlignmentRating, engagementRating } = inputs;
+
+  // Conversion Rate (25 pts): 0-25 based on CVR %
+  const cvr = visitors > 0 ? conversions / visitors : 0;
+  const conversionScore = Math.min(25, cvr * 100 * 5); // 5% CVR = 25pts
+
+  // Cost Efficiency (25 pts): based on CPA
+  const cpa = conversions > 0 ? spend / conversions : spend;
+  const cpaScore = cpa <= 0 ? 0 : Math.min(25, Math.max(0, 25 - (cpa / 20) * 25));
+
+  // Audience Match (20 pts): from 1-5 rating → 0-20
+  const audienceScore = ((audienceMatchRating - 1) / 4) * 20;
+
+  // Intent Alignment (15 pts): from 1-5 rating → 0-15
+  const intentScore = ((intentAlignmentRating - 1) / 4) * 15;
+
+  // Engagement Quality (15 pts): from 1-5 rating → 0-15
+  const engagementScore = ((engagementRating - 1) / 4) * 15;
+
+  return Math.round(conversionScore + cpaScore + audienceScore + intentScore + engagementScore);
 }
 
 function ExperimentWizard({
@@ -61,6 +78,10 @@ function ExperimentWizard({
   const [visitors, setVisitors] = useState('');
   const [conversions, setConversions] = useState('');
   const [spend, setSpend] = useState('');
+  const [audienceMatchRating, setAudienceMatchRating] = useState(3);
+  const [intentAlignmentRating, setIntentAlignmentRating] = useState(3);
+  const [engagementRating, setEngagementRating] = useState(3);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
   const topAssumption = assumptions
@@ -68,41 +89,91 @@ function ExperimentWizard({
     .sort((a, b) => b.criticality - a.criticality || a.evidence_level - b.evidence_level)[0];
 
   const mss = visitors && conversions && spend
-    ? computeMSS(+visitors, +conversions, +spend)
+    ? computeMSS({
+        visitors: +visitors,
+        conversions: +conversions,
+        spend: +spend,
+        audienceMatchRating,
+        intentAlignmentRating,
+        engagementRating,
+      })
     : null;
+
+  const validateResults = (): boolean => {
+    const errors: Record<string, string> = {};
+    const v = +visitors;
+    const c = +conversions;
+    const s = +spend;
+
+    if (isNaN(v) || v < 0) {
+      errors.visitors = 'Visitors must be 0 or more.';
+    }
+    if (isNaN(c) || c < 0) {
+      errors.conversions = 'Conversions must be 0 or more.';
+    } else if (v >= 0 && c > v) {
+      errors.conversions = 'Conversions cannot exceed visitors.';
+    }
+    if (isNaN(s) || s < 0) {
+      errors.spend = 'Spend must be 0 or more.';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSave = async () => {
     if (!dossierId) return;
+    if (!validateResults()) return;
+
     setSaving(true);
     try {
       const v = +visitors || 0;
       const c = +conversions || 0;
       const s = +spend || 0;
-      const calculatedMss = computeMSS(v, c, s);
-
-      const { error } = await supabase.from('experiments').insert({
-        dossier_id: dossierId,
-        hypothesis: hypothesis || selectedAssumption?.assumption_text,
-        tiny_brand_name: selectedBrand || brandName,
-        landing_page_url: landingUrl || null,
-        unique_visitors: v,
+      const calculatedMss = computeMSS({
+        visitors: v,
         conversions: c,
         spend: s,
-        mss: calculatedMss,
-        status: 'complete',
+        audienceMatchRating,
+        intentAlignmentRating,
+        engagementRating,
       });
 
-      if (error) throw error;
+      // Insert experiment first
+      const { data: exp, error: expErr } = await supabase
+        .from('experiments')
+        .insert({
+          dossier_id: dossierId,
+          hypothesis: hypothesis || selectedAssumption?.assumption_text,
+          tiny_brand_name: selectedBrand || brandName,
+          landing_page_url: landingUrl || null,
+          unique_visitors: v,
+          conversions: c,
+          spend: s,
+          mss: calculatedMss,
+          status: 'complete',
+        })
+        .select()
+        .single();
 
-      // Update dossier MSS
-      await supabase
+      if (expErr) throw expErr;
+
+      // Then update dossier status
+      const { error: dossierErr } = await supabase
         .from('dossiers')
         .update({ mss: calculatedMss, status: 'phase2_complete' })
         .eq('id', dossierId);
 
+      if (dossierErr) {
+        // Rollback the experiment insert
+        await supabase.from('experiments').delete().eq('id', exp.id);
+        throw dossierErr;
+      }
+
       onComplete();
     } catch (err: any) {
-      Alert.alert('Error', err.message);
+      Alert.alert('Error', 'Failed to save experiment. Please try again.');
+      console.error('[phase2-save]', err);
     } finally {
       setSaving(false);
     }
@@ -225,21 +296,73 @@ function ExperimentWizard({
                 <SketchField
                   label="Unique Visitors"
                   value={visitors}
-                  onChangeText={setVisitors}
+                  onChangeText={(t) => { setVisitors(t); setValidationErrors((e) => ({ ...e, visitors: '' })); }}
                   placeholder="e.g. 250"
                 />
+                {!!validationErrors.visitors && (
+                  <Text style={styles.validationError}>{validationErrors.visitors}</Text>
+                )}
                 <SketchField
                   label="Conversions (sign-ups / clicks)"
                   value={conversions}
-                  onChangeText={setConversions}
+                  onChangeText={(t) => { setConversions(t); setValidationErrors((e) => ({ ...e, conversions: '' })); }}
                   placeholder="e.g. 12"
                 />
+                {!!validationErrors.conversions && (
+                  <Text style={styles.validationError}>{validationErrors.conversions}</Text>
+                )}
                 <SketchField
                   label="Ad Spend (USD)"
                   value={spend}
-                  onChangeText={setSpend}
+                  onChangeText={(t) => { setSpend(t); setValidationErrors((e) => ({ ...e, spend: '' })); }}
                   placeholder="e.g. 50"
                 />
+                {!!validationErrors.spend && (
+                  <Text style={styles.validationError}>{validationErrors.spend}</Text>
+                )}
+
+                {/* Qualitative ratings (1-5) */}
+                <Text style={styles.wizardHint}>Rate the qualitative signals (1 = poor, 5 = excellent):</Text>
+
+                <View style={styles.ratingRow}>
+                  <Text style={styles.ratingLabel}>Audience Match</Text>
+                  <View style={styles.ratingPips}>
+                    {[1,2,3,4,5].map((n) => (
+                      <TouchableOpacity key={n} onPress={() => setAudienceMatchRating(n)}>
+                        <View style={[styles.ratingPip, audienceMatchRating >= n && styles.ratingPipActive]}>
+                          <Text style={[styles.ratingPipText, audienceMatchRating >= n && styles.ratingPipTextActive]}>{n}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
+                <View style={styles.ratingRow}>
+                  <Text style={styles.ratingLabel}>Intent Alignment</Text>
+                  <View style={styles.ratingPips}>
+                    {[1,2,3,4,5].map((n) => (
+                      <TouchableOpacity key={n} onPress={() => setIntentAlignmentRating(n)}>
+                        <View style={[styles.ratingPip, intentAlignmentRating >= n && styles.ratingPipActive]}>
+                          <Text style={[styles.ratingPipText, intentAlignmentRating >= n && styles.ratingPipTextActive]}>{n}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
+                <View style={styles.ratingRow}>
+                  <Text style={styles.ratingLabel}>Engagement Quality</Text>
+                  <View style={styles.ratingPips}>
+                    {[1,2,3,4,5].map((n) => (
+                      <TouchableOpacity key={n} onPress={() => setEngagementRating(n)}>
+                        <View style={[styles.ratingPip, engagementRating >= n && styles.ratingPipActive]}>
+                          <Text style={[styles.ratingPipText, engagementRating >= n && styles.ratingPipTextActive]}>{n}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
                 {mss !== null && (
                   <View style={styles.mssPreview}>
                     <Text style={styles.mssPreviewLabel}>Estimated MSS</Text>
@@ -254,7 +377,9 @@ function ExperimentWizard({
                   <SketchButton label="← Back" onPress={() => setStep('brand')} variant="ghost" />
                   <SketchButton
                     label="Review →"
-                    onPress={() => setStep('review')}
+                    onPress={() => {
+                      if (validateResults()) setStep('review');
+                    }}
                     variant="primary"
                     disabled={!visitors}
                   />
@@ -691,6 +816,46 @@ const styles = StyleSheet.create({
     fontFamily: typography.mono,
     fontSize: fontSizes.xs,
     color: colors.inkMuted,
+  },
+  validationError: {
+    fontFamily: typography.body,
+    fontSize: fontSizes.xs,
+    color: '#D65A4E',
+    marginTop: -8,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  ratingLabel: {
+    fontFamily: 'Kalam_400Regular',
+    fontSize: fontSizes.sm,
+    color: colors.inkMuted,
+    flex: 1,
+  },
+  ratingPips: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  ratingPip: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ratingPipActive: {
+    backgroundColor: colors.teal,
+  },
+  ratingPipText: {
+    fontFamily: 'Kalam_700Bold',
+    fontSize: fontSizes.xs,
+    color: colors.inkMuted,
+  },
+  ratingPipTextActive: {
+    color: colors.white,
   },
   reviewCard: { gap: 8 },
   reviewLabel: {

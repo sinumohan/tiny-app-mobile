@@ -125,7 +125,10 @@ export default function ProfileScreen() {
                 </Text>
               ))}
               {p === 'Free' ? null : (
-                <TouchableOpacity style={styles.upgradeBtn}>
+                <TouchableOpacity
+                  style={styles.upgradeBtn}
+                  onPress={() => Alert.alert('Coming Soon', 'Plan upgrades will be available in the next release.')}
+                >
                   <Text style={styles.upgradeBtnText}>Upgrade to {p}</Text>
                 </TouchableOpacity>
               )}

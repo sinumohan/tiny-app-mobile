@@ -7,16 +7,48 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
+    let cancelled = false;
+
+    async function fetchSession(attempt = 1) {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (cancelled) return;
+        if (error) {
+          console.error('[auth] getSession error:', error.message);
+          if (attempt < 3) {
+            setTimeout(() => fetchSession(attempt + 1), attempt * 1000);
+            return;
+          }
+          setSession(null);
+        } else {
+          setSession(session);
+        }
+      } catch (err) {
+        console.error('[auth] unexpected getSession error:', err);
+        if (!cancelled) {
+          if (attempt < 3) {
+            setTimeout(() => fetchSession(attempt + 1), attempt * 1000);
+            return;
+          }
+          setSession(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    fetchSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        setSession(session);
+      }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
