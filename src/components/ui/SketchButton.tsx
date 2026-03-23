@@ -35,7 +35,7 @@ export function SketchButton({
     styles.base,
     styles[`size_${size}` as keyof typeof styles] as ViewStyle,
     styles[`variant_${variant}` as keyof typeof styles] as ViewStyle,
-    isDisabled && styles.disabled,
+    ...(isDisabled ? [styles.disabled as ViewStyle] : []),
     style ?? {},
   ];
 
@@ -43,7 +43,7 @@ export function SketchButton({
     styles.text,
     styles[`text_${size}` as keyof typeof styles] as TextStyle,
     styles[`textVariant_${variant}` as keyof typeof styles] as TextStyle,
-    isDisabled && styles.textDisabled,
+    ...(isDisabled ? [styles.textDisabled as TextStyle] : []),
   ];
 
   return (

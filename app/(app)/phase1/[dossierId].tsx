@@ -605,5 +605,5 @@ const styles = StyleSheet.create({
   actionBtn: {
     flex: 1,
   },
-  amber: colors.amber,
+  amber: { color: colors.amber },
 });

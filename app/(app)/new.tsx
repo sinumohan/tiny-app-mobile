@@ -136,7 +136,7 @@ export default function NewDossierScreen() {
     try {
       const { data, error } = await createDossier(formData);
       if (error) {
-        Alert.alert('Error', error.message ?? 'Could not create dossier.');
+        Alert.alert('Error', typeof error === 'string' ? error : (error as { message?: string }).message ?? 'Could not create dossier.');
         return;
       }
       if (data) {
