@@ -12,9 +12,9 @@ interface AssumptionCardProps {
 }
 
 function getLeftBorderColor(criticality: number, evidence_level: number, is_tested: boolean): string {
-  if (is_tested) return colors.teal;
-  if (criticality >= 4 && evidence_level <= 2) return colors.risk;
-  if (criticality >= 3) return colors.yellow;
+  if (is_tested) return colors.mint;
+  if (criticality >= 4 && evidence_level <= 2) return colors.coral;
+  if (criticality >= 3) return colors.amber;
   return colors.border;
 }
 
@@ -29,7 +29,7 @@ function Dots({ filled, total, color }: { filled: number; total: number; color: 
             color: i < filled ? color : colors.border,
           }}
         >
-          {i < filled ? '●' : '○'}
+          {i < filled ? '\u25CF' : '\u25CB'}
         </Text>
       ))}
     </View>
@@ -61,11 +61,11 @@ export function AssumptionCard({
       <View style={styles.metricsRow}>
         <View style={styles.metric}>
           <Text style={styles.metricLabel}>Criticality</Text>
-          <Dots filled={criticality} total={5} color={colors.risk} />
+          <Dots filled={criticality} total={5} color={colors.coral} />
         </View>
         <View style={styles.metric}>
           <Text style={styles.metricLabel}>Evidence</Text>
-          <Dots filled={evidence_level} total={5} color={colors.blue} />
+          <Dots filled={evidence_level} total={5} color={colors.electric} />
         </View>
       </View>
     </View>
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: 10,
-    shadowColor: colors.ink,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
@@ -94,20 +94,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   categoryBadge: {
-    backgroundColor: colors.paperAlt,
+    backgroundColor: colors.surfaceAlt,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
   },
   categoryText: {
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     fontFamily: typography.body,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   testedBadge: {
-    backgroundColor: colors.teal,
+    backgroundColor: colors.mint,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     fontFamily: typography.body,
     textTransform: 'uppercase',
     letterSpacing: 0.5,

@@ -15,7 +15,7 @@ import { SketchPaper } from '../../src/components/ui/SketchPaper';
 import { SketchButton } from '../../src/components/ui/SketchButton';
 import { SketchField } from '../../src/components/ui/SketchField';
 import { colors } from '../../src/lib/colors';
-import { typography, fontSizes } from '../../src/lib/typography';
+import { fontSizes } from '../../src/lib/typography';
 
 export default function SignInScreen() {
   const { signIn } = useAuth();
@@ -100,7 +100,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
   },
   kav: {
     flex: 1,
@@ -117,20 +117,20 @@ const styles = StyleSheet.create({
   brandName: {
     fontFamily: 'Kalam_700Bold',
     fontSize: 34,
-    color: colors.teal,
+    color: colors.electric,
     letterSpacing: -0.5,
   },
   brandLine: {
     width: 60,
     height: 3,
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.electric,
     borderRadius: 2,
     marginVertical: 8,
   },
   brandTagline: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   card: {
     padding: 24,
@@ -152,19 +152,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   link: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.sm,
-    color: colors.teal,
+    color: colors.electric,
   },
   hint: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
     marginTop: 24,
     fontStyle: 'italic',

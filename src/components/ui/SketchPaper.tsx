@@ -31,9 +31,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
-    shadowColor: colors.ink,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
@@ -41,16 +41,16 @@ const styles = StyleSheet.create({
   },
   cardWithMargin: {
     borderLeftWidth: 4,
-    borderLeftColor: colors.marginLine,
+    borderLeftColor: colors.notebookMargin,
   },
   page: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
     flexDirection: 'row',
   },
   marginLine: {
     width: 2,
-    backgroundColor: colors.marginLine,
+    backgroundColor: colors.notebookMargin,
     marginLeft: 52,
   },
   pageContent: {

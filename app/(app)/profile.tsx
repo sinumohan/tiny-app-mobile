@@ -17,9 +17,9 @@ import { typography, fontSizes } from '../../src/lib/typography';
 import Constants from 'expo-constants';
 
 const PLAN_CONFIG = {
-  free: { label: 'Free', bg: colors.border, text: colors.inkMuted },
-  pro: { label: 'Pro', bg: colors.blue, text: colors.white },
-  founder: { label: 'Founder+', bg: colors.teal, text: colors.white },
+  free: { label: 'Free', bg: colors.border, text: colors.muted },
+  pro: { label: 'Pro', bg: colors.electric, text: colors.white },
+  founder: { label: 'Founder+', bg: colors.mint, text: colors.white },
 };
 
 type Plan = keyof typeof PLAN_CONFIG;
@@ -84,7 +84,7 @@ export default function ProfileScreen() {
         {/* Account info */}
         <SectionHeader title="Account" style={styles.sectionHeader} />
         <SketchPaper variant="card" style={styles.card}>
-          <InfoRow label="Email" value={user?.email ?? '—'} />
+          <InfoRow label="Email" value={user?.email ?? '--'} />
           <InfoRow label="Plan" value={PLAN_CONFIG[plan]?.label ?? 'Free'} />
           <InfoRow
             label="Member since"
@@ -94,7 +94,7 @@ export default function ProfileScreen() {
                     month: 'long',
                     year: 'numeric',
                   })
-                : '—'
+                : '--'
             }
           />
         </SketchPaper>
@@ -121,7 +121,7 @@ export default function ProfileScreen() {
               </View>
               {features.map((f) => (
                 <Text key={f} style={styles.featureText}>
-                  ✓ {f}
+                  {'\u2713'} {f}
                 </Text>
               ))}
               {p === 'Free' ? null : (
@@ -156,7 +156,7 @@ export default function ProfileScreen() {
         />
 
         <Text style={styles.footer}>
-          tinyexperiments.me — Structured Founder Validation
+          tinyexperiments.me -- Structured Founder Validation
         </Text>
 
         <View style={{ height: 40 }} />
@@ -168,7 +168,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.offWhite,
   },
   header: {
     paddingHorizontal: 20,
@@ -176,11 +176,12 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    backgroundColor: colors.white,
   },
   headerTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: 28,
-    color: colors.teal,
+    color: colors.ink,
   },
   scroll: {
     padding: 16,
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   emailText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
     color: colors.ink,
   },
@@ -235,12 +236,12 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   infoLabel: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   infoValue: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
     color: colors.ink,
     maxWidth: '60%',
@@ -261,26 +262,26 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   currentBadge: {
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
   currentBadgeText: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
     color: colors.white,
   },
   featureText: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     paddingLeft: 8,
     lineHeight: 22,
   },
   upgradeBtn: {
     marginTop: 8,
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.electric,
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 6,
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
   upgradeBtnText: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.sm,
-    color: colors.ink,
+    color: colors.white,
   },
   planDivider: {
     height: 1,
@@ -302,9 +303,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   footer: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
     fontStyle: 'italic',
   },

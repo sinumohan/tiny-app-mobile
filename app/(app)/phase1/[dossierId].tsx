@@ -22,11 +22,11 @@ import { colors } from '../../../src/lib/colors';
 import { typography, fontSizes } from '../../../src/lib/typography';
 
 const LAYER_LABELS = [
-  { key: 'layer1', title: 'Problem-Market Fit', icon: '🎯' },
-  { key: 'layer2', title: "Market Structure (Porter's 5)", icon: '🏗' },
-  { key: 'layer3', title: 'Business Context (5Cs)', icon: '🧭' },
-  { key: 'layer4', title: 'Assumption Stack', icon: '📋' },
-  { key: 'layer5', title: 'Market Size', icon: '📊' },
+  { key: 'layer1', title: 'Problem-Market Fit', icon: '\uD83C\uDFAF' },
+  { key: 'layer2', title: "Market Structure (Porter's 5)", icon: '\uD83C\uDFD7' },
+  { key: 'layer3', title: 'Business Context (5Cs)', icon: '\uD83E\uDDED' },
+  { key: 'layer4', title: 'Assumption Stack', icon: '\uD83D\uDCCB' },
+  { key: 'layer5', title: 'Market Size', icon: '\uD83D\uDCCA' },
 ];
 
 function AnimatedDots() {
@@ -55,7 +55,7 @@ function LayerAccordion({
 }) {
   const [open, setOpen] = useState(false);
   const scoreColor =
-    score >= 80 ? colors.teal : score >= 60 ? colors.blue : score >= 40 ? colors.amber : colors.risk;
+    score >= 80 ? colors.mint : score >= 60 ? colors.electric : score >= 40 ? colors.amber : colors.coral;
 
   return (
     <SketchPaper variant="card" style={styles.layerCard}>
@@ -63,7 +63,7 @@ function LayerAccordion({
         <View style={styles.layerHeader}>
           <Text style={styles.layerIcon}>{icon}</Text>
           <View style={styles.layerTitleBlock}>
-            <Text style={styles.layerTitle}>{title}</Text>
+            <Text style={[styles.layerTitle, open && { color: colors.electric }]}>{title}</Text>
             <Text style={styles.layerSummary} numberOfLines={open ? undefined : 2}>
               {summary}
             </Text>
@@ -73,7 +73,7 @@ function LayerAccordion({
             <Text style={styles.layerMaxScore}>/20</Text>
           </View>
         </View>
-        <Text style={styles.accordionToggle}>{open ? '▲ Less' : '▼ More'}</Text>
+        <Text style={styles.accordionToggle}>{open ? '\u25B2 Less' : '\u25BC More'}</Text>
       </TouchableOpacity>
 
       {open && (
@@ -81,7 +81,7 @@ function LayerAccordion({
           <View style={styles.divider} />
           {details.map((d, i) => (
             <View key={i} style={styles.detailRow}>
-              <Text style={styles.detailBullet}>—</Text>
+              <Text style={styles.detailBullet}>--</Text>
               <Text style={styles.detailText}>{d}</Text>
             </View>
           ))}
@@ -105,7 +105,7 @@ function TVSBreakdownBars({ breakdown }: { breakdown: Phase1Result['tvs_breakdow
       <Text style={styles.breakdownTitle}>TVS Breakdown</Text>
       {bars.map(({ label, score }) => {
         const pct = (score / 20) * 100;
-        const barColor = pct >= 80 ? colors.teal : pct >= 60 ? colors.blue : pct >= 40 ? colors.amber : colors.risk;
+        const barColor = pct >= 80 ? colors.mint : pct >= 60 ? colors.electric : pct >= 40 ? colors.amber : colors.coral;
         return (
           <View key={label} style={styles.barRow}>
             <Text style={styles.barLabel}>{label}</Text>
@@ -125,18 +125,17 @@ function TVSBreakdownBars({ breakdown }: { breakdown: Phase1Result['tvs_breakdow
 }
 
 function RecommendationBadge({ recommendation, reasoning }: { recommendation: string; reasoning: string }) {
-  const config: Record<string, { bg: string; text: string; emoji: string }> = {
-    Proceed: { bg: colors.teal, text: colors.white, emoji: '✅' },
-    Pivot: { bg: colors.yellow, text: colors.ink, emoji: '↩️' },
-    Pause: { bg: colors.risk, text: colors.white, emoji: '⏸' },
+  const config: Record<string, { bg: string; text: string; label: string }> = {
+    Proceed: { bg: colors.mint, text: colors.white, label: 'Proceed' },
+    Pivot: { bg: colors.amber, text: colors.ink, label: 'Pivot' },
+    Pause: { bg: colors.coral, text: colors.white, label: 'Pause' },
   };
   const badge = config[recommendation] ?? config['Pause'];
 
   return (
     <SketchPaper variant="card" hasMarginLine style={[styles.recCard, { borderLeftColor: badge.bg }]}>
       <View style={[styles.recBadge, { backgroundColor: badge.bg }]}>
-        <Text style={styles.recEmoji}>{badge.emoji}</Text>
-        <Text style={[styles.recLabel, { color: badge.text }]}>{recommendation}</Text>
+        <Text style={[styles.recLabel, { color: badge.text }]}>{badge.label}</Text>
       </View>
       <Text style={styles.recReasoning}>{reasoning}</Text>
     </SketchPaper>
@@ -191,7 +190,7 @@ export default function Phase1Screen() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>← Back</Text>
+          <Text style={styles.backBtnText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Phase 1 Analysis</Text>
         <View style={{ width: 60 }} />
@@ -224,7 +223,7 @@ export default function Phase1Screen() {
         {/* Loading */}
         {analyzing && (
           <SketchPaper variant="card" style={styles.analyzingCard}>
-            <ActivityIndicator color={colors.teal} size="large" />
+            <ActivityIndicator color={colors.electric} size="large" />
             <View style={styles.analyzingTextRow}>
               <Text style={styles.analyzingText}>Running 5-layer analysis</Text>
               <AnimatedDots />
@@ -253,7 +252,7 @@ export default function Phase1Screen() {
         {/* Results */}
         {result && !analyzing && (
           <>
-            <SectionHeader title="Analysis Results" subtitle={`TVS: ${tvs ?? '—'}/100`} />
+            <SectionHeader title="Analysis Results" subtitle={`TVS: ${tvs ?? '--'}/100`} />
 
             {/* Recommendation */}
             <RecommendationBadge
@@ -318,7 +317,7 @@ export default function Phase1Screen() {
                 style={styles.actionBtn}
               />
               <SketchButton
-                label="Design Experiment →"
+                label="Design Experiment"
                 onPress={() => router.push(`/(app)/phase2/${dossierId}`)}
                 variant="primary"
                 size="md"
@@ -337,7 +336,7 @@ export default function Phase1Screen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.offWhite,
   },
   header: {
     flexDirection: 'row',
@@ -347,12 +346,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    backgroundColor: colors.white,
   },
   backBtn: { padding: 4 },
   backBtnText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.teal,
+    color: colors.electric,
+    fontWeight: '600',
   },
   headerTitle: {
     fontFamily: 'Kalam_700Bold',
@@ -369,13 +370,13 @@ const styles = StyleSheet.create({
   introTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.xl,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 12,
   },
   introBody: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     lineHeight: 22,
     marginBottom: 16,
   },
@@ -398,13 +399,13 @@ const styles = StyleSheet.create({
   dotsText: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.lg,
-    color: colors.teal,
+    color: colors.electric,
     width: 24,
   },
   analyzingHint: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
     fontStyle: 'italic',
   },
@@ -415,12 +416,12 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.lg,
-    color: colors.risk,
+    color: colors.coral,
   },
   errorBody: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   retryBtn: { marginTop: 8 },
   tvsRingContainer: {
@@ -429,9 +430,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tvsLabel: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   breakdownCard: {
     marginBottom: 16,
@@ -439,7 +440,7 @@ const styles = StyleSheet.create({
   breakdownTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.base,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 12,
   },
   barRow: {
@@ -451,7 +452,7 @@ const styles = StyleSheet.create({
   barLabel: {
     fontFamily: typography.mono,
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     width: 20,
   },
   barTrack: {
@@ -487,7 +488,7 @@ const styles = StyleSheet.create({
   barTotalValue: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.base,
-    color: colors.teal,
+    color: colors.electric,
   },
   recCard: {
     marginBottom: 16,
@@ -502,15 +503,14 @@ const styles = StyleSheet.create({
     gap: 6,
     alignSelf: 'flex-start',
   },
-  recEmoji: { fontSize: 16 },
   recLabel: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.md,
   },
   recReasoning: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     lineHeight: 20,
   },
   layersHeader: {
@@ -533,9 +533,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   layerSummary: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     lineHeight: 20,
   },
   layerScoreBlock: {
@@ -546,14 +546,14 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.xl,
   },
   layerMaxScore: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   accordionToggle: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.teal,
+    color: colors.electric,
     marginTop: 8,
     textAlign: 'right',
   },
@@ -573,26 +573,26 @@ const styles = StyleSheet.create({
   detailBullet: {
     fontFamily: typography.mono,
     fontSize: fontSizes.sm,
-    color: colors.teal,
+    color: colors.electric,
     marginTop: 2,
   },
   detailText: {
     flex: 1,
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
     color: colors.ink,
     lineHeight: 20,
   },
   assumptionCount: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     marginVertical: 8,
   },
   moreAssumptions: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
     marginTop: 6,
     fontStyle: 'italic',
@@ -605,5 +605,4 @@ const styles = StyleSheet.create({
   actionBtn: {
     flex: 1,
   },
-  amber: { color: colors.amber },
 });

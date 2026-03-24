@@ -8,7 +8,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { colors } from '../../lib/colors';
-import { typography, fontSizes } from '../../lib/typography';
+import { fontSizes } from '../../lib/typography';
 
 interface SketchButtonProps {
   label: string;
@@ -55,7 +55,7 @@ export function SketchButton({
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'primary' ? colors.ink : colors.teal}
+          color={variant === 'primary' || variant === 'danger' ? colors.white : colors.electric}
           size="small"
         />
       ) : (
@@ -72,36 +72,36 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   size_sm: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
   size_md: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
   },
   size_lg: {
-    paddingVertical: 16,
-    paddingHorizontal: 28,
+    paddingVertical: 18,
+    paddingHorizontal: 32,
   },
   variant_primary: {
-    backgroundColor: colors.yellow,
-    shadowColor: colors.ink,
+    backgroundColor: colors.electric,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 6,
+    elevation: 3,
   },
   variant_secondary: {
-    backgroundColor: colors.paper,
-    borderWidth: 2,
-    borderColor: colors.teal,
+    backgroundColor: colors.white,
+    borderWidth: 1.5,
+    borderColor: colors.electric,
   },
   variant_ghost: {
     backgroundColor: 'transparent',
   },
   variant_danger: {
-    backgroundColor: colors.risk,
-    shadowColor: colors.risk,
+    backgroundColor: colors.coral,
+    shadowColor: colors.coral,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -111,26 +111,26 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    fontFamily: typography.heading,
+    fontFamily: 'Kalam_700Bold',
     letterSpacing: 0.3,
   },
   text_sm: {
-    fontSize: fontSizes.sm,
+    fontSize: fontSizes.sm + 1,
   },
   text_md: {
-    fontSize: fontSizes.base,
+    fontSize: fontSizes.base + 1,
   },
   text_lg: {
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.md + 1,
   },
   textVariant_primary: {
-    color: colors.ink,
+    color: colors.electricText,
   },
   textVariant_secondary: {
-    color: colors.teal,
+    color: colors.electric,
   },
   textVariant_ghost: {
-    color: colors.inkMuted,
+    color: colors.electric,
   },
   textVariant_danger: {
     color: colors.white,

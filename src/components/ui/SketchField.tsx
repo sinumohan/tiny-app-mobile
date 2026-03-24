@@ -45,7 +45,7 @@ export function SketchField({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder ?? `Enter ${label.toLowerCase()}...`}
-        placeholderTextColor={colors.inkMuted}
+        placeholderTextColor={colors.placeholder}
         multiline={multiline}
         numberOfLines={multiline ? numberOfLines : 1}
         onFocus={() => setFocused(true)}
@@ -76,17 +76,17 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: typography.subheading,
     fontSize: fontSizes.base,
-    color: colors.teal,
+    color: colors.electric,
   },
   required: {
-    color: colors.risk,
+    color: colors.coral,
     fontSize: fontSizes.base,
     fontFamily: typography.subheading,
   },
   input: {
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
     borderBottomWidth: 2,
-    borderBottomColor: colors.ruleLine,
+    borderBottomColor: colors.border,
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth: 0,
@@ -104,25 +104,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
   },
   focused: {
-    borderBottomColor: colors.teal,
-    borderColor: colors.teal,
+    borderBottomColor: colors.electric,
+    borderColor: colors.borderFocus,
   },
   warning: {
-    borderBottomColor: colors.risk,
-    borderColor: colors.risk,
+    borderBottomColor: colors.coral,
+    borderColor: colors.coral,
   },
   warningText: {
-    color: colors.risk,
+    color: colors.coral,
     fontSize: fontSizes.xs,
     fontFamily: typography.body,
     marginTop: 4,
     fontStyle: 'italic',
   },
   charCount: {
-    color: colors.inkMuted,
+    color: colors.muted,
     fontSize: fontSizes.xs,
     fontFamily: typography.body,
     textAlign: 'right',

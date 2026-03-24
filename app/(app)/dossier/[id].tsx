@@ -26,7 +26,7 @@ import { typography, fontSizes } from '../../../src/lib/typography';
 function CCSFormula({ tvs, mss, ccs }: { tvs: number | null; mss: number | null; ccs: number | null }) {
   return (
     <SketchPaper variant="card" style={styles.ccsCard}>
-      <Text style={styles.ccsFormula}>CCS = (TVS × 0.35) + (MSS × 0.65)</Text>
+      <Text style={styles.ccsFormula}>CCS = (TVS x 0.35) + (MSS x 0.65)</Text>
       <View style={styles.scoreRingsRow}>
         <View style={styles.scoreBlock}>
           <ScoreRing score={tvs} size="md" label="TVS" color={tvs != null ? undefined : colors.border} />
@@ -66,13 +66,13 @@ function ConfidenceTrajectory({ tvs, mss, ccs }: { tvs: number | null; mss: numb
 
   const max = 100;
   const bars = points.map((v) => Math.round((v / max) * 10));
-  const barChars = '▁▂▃▄▅▆▇█';
+  const barChars = '\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588';
 
   return (
     <SketchPaper variant="card" style={styles.trajectoryCard}>
       <Text style={styles.trajectoryTitle}>Confidence Trajectory</Text>
       <Text style={styles.sparkline}>
-        {bars.map((b) => barChars[Math.min(b - 1, 7)] || '▁').join('  ')}
+        {bars.map((b) => barChars[Math.min(b - 1, 7)] || '\u2581').join('  ')}
       </Text>
       <View style={styles.trajectoryLabels}>
         {['TVS', 'MSS', 'CCS'].slice(0, points.length).map((l, i) => (
@@ -148,7 +148,7 @@ export default function DossierDetailScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator color={colors.teal} size="large" />
+          <ActivityIndicator color={colors.electric} size="large" />
           <Text style={styles.loadingText}>Loading dossier...</Text>
         </View>
       </SafeAreaView>
@@ -173,7 +173,7 @@ export default function DossierDetailScreen() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>← Back</Text>
+          <Text style={styles.backBtnText}>Back</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleShare} style={styles.shareBtn}>
           <Text style={styles.shareBtnText}>Share</Text>
@@ -306,7 +306,7 @@ export default function DossierDetailScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.offWhite,
   },
   header: {
     flexDirection: 'row',
@@ -316,25 +316,30 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    backgroundColor: colors.white,
   },
   backBtn: {
     padding: 4,
   },
   backBtnText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.teal,
+    color: colors.electric,
+    fontWeight: '600',
   },
   shareBtn: {
-    backgroundColor: colors.paperAlt,
+    backgroundColor: colors.electricLight,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.electric,
   },
   shareBtnText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.teal,
+    color: colors.electric,
+    fontWeight: '600',
   },
   scroll: {
     padding: 16,
@@ -365,9 +370,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ccsFormula: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     marginBottom: 16,
     fontStyle: 'italic',
   },
@@ -382,9 +387,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   scoreDesc: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   formulaOp: {
     alignItems: 'center',
@@ -393,7 +398,7 @@ const styles = StyleSheet.create({
   opText: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.xl,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   trajectoryCard: {
     marginBottom: 16,
@@ -401,19 +406,19 @@ const styles = StyleSheet.create({
   trajectoryTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.base,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 8,
   },
   trajectoryEmpty: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     fontStyle: 'italic',
   },
   sparkline: {
     fontFamily: 'Courier New',
     fontSize: 28,
-    color: colors.teal,
+    color: colors.electric,
     letterSpacing: 4,
     marginBottom: 8,
   },
@@ -425,9 +430,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   trajectoryLabelText: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
     textTransform: 'uppercase',
   },
   trajectoryLabelValue: {
@@ -441,13 +446,13 @@ const styles = StyleSheet.create({
   briefLabel: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.sm,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 2,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   briefValue: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.base,
     color: colors.ink,
     lineHeight: 22,
@@ -458,13 +463,13 @@ const styles = StyleSheet.create({
   expBrand: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.md,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 4,
   },
   expHypothesis: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     marginBottom: 10,
     lineHeight: 20,
   },
@@ -482,9 +487,9 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   expMetricLabel: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   loadingContainer: {
     flex: 1,
@@ -494,14 +499,14 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   loadingText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   errorText: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.risk,
+    color: colors.coral,
     textAlign: 'center',
     marginBottom: 16,
   },

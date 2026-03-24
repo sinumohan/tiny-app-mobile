@@ -22,12 +22,12 @@ import { Dossier } from '../../src/lib/supabase';
 
 function StatusBadge({ status }: { status: Dossier['status'] }) {
   const map: Record<Dossier['status'], { label: string; bg: string; text: string }> = {
-    draft: { label: 'Draft', bg: colors.paperAlt, text: colors.inkMuted },
-    phase1_pending: { label: 'Analysing...', bg: colors.blue, text: colors.white },
-    phase1_complete: { label: 'Phase 1 Done', bg: colors.teal, text: colors.white },
-    phase2_pending: { label: 'Experimenting', bg: colors.yellow, text: colors.ink },
-    phase2_complete: { label: 'Phase 2 Done', bg: colors.teal, text: colors.white },
-    complete: { label: 'Validated', bg: colors.teal, text: colors.white },
+    draft: { label: 'Draft', bg: colors.surfaceAlt, text: colors.muted },
+    phase1_pending: { label: 'Analysing...', bg: colors.sky, text: colors.white },
+    phase1_complete: { label: 'Phase 1 Done', bg: colors.mint, text: colors.white },
+    phase2_pending: { label: 'Experimenting', bg: colors.electric, text: colors.white },
+    phase2_complete: { label: 'Phase 2 Done', bg: colors.mint, text: colors.white },
+    complete: { label: 'Validated', bg: colors.mint, text: colors.white },
   };
   const badge = map[status] ?? map['draft'];
 
@@ -42,9 +42,15 @@ function DossierCard({ dossier, onPress }: { dossier: Dossier; onPress: () => vo
   const phase1Done = ['phase1_complete', 'phase2_pending', 'phase2_complete', 'complete'].includes(dossier.status);
   const phase2Done = ['phase2_complete', 'complete'].includes(dossier.status);
 
+  const statusBorderColor =
+    dossier.status === 'complete' ? colors.statusComplete :
+    dossier.status === 'draft' ? colors.statusDraft :
+    dossier.status.startsWith('phase2') ? colors.mint :
+    colors.statusInProgress;
+
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.85}>
-      <SketchPaper variant="card" style={styles.card}>
+      <SketchPaper variant="card" style={[styles.card, { borderLeftWidth: 3, borderLeftColor: statusBorderColor }]}>
         <View style={styles.cardHeader}>
           <View style={styles.cardMeta}>
             <Text style={styles.ideaTitle} numberOfLines={2}>
@@ -67,13 +73,13 @@ function DossierCard({ dossier, onPress }: { dossier: Dossier; onPress: () => vo
           {dossier.tvs != null && (
             <View style={styles.scorePill}>
               <Text style={styles.scorePillLabel}>TVS</Text>
-              <Text style={[styles.scorePillValue, { color: colors.blue }]}>{dossier.tvs}</Text>
+              <Text style={[styles.scorePillValue, { color: colors.sky }]}>{dossier.tvs}</Text>
             </View>
           )}
           {dossier.mss != null && (
             <View style={styles.scorePill}>
               <Text style={styles.scorePillLabel}>MSS</Text>
-              <Text style={[styles.scorePillValue, { color: colors.teal }]}>{dossier.mss}</Text>
+              <Text style={[styles.scorePillValue, { color: colors.mint }]}>{dossier.mss}</Text>
             </View>
           )}
         </View>
@@ -85,7 +91,7 @@ function DossierCard({ dossier, onPress }: { dossier: Dossier; onPress: () => vo
           currentMSS={dossier.mss}
         />
 
-        <Text style={styles.tapHint}>Tap to open →</Text>
+        <Text style={styles.tapHint}>Tap to open</Text>
       </SketchPaper>
     </TouchableOpacity>
   );
@@ -94,13 +100,13 @@ function DossierCard({ dossier, onPress }: { dossier: Dossier; onPress: () => vo
 function EmptyState({ onNew }: { onNew: () => void }) {
   return (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyNotebook}>📓</Text>
+      <Text style={styles.emptyNotebook}>{'\uD83D\uDCD3'}</Text>
       <Text style={styles.emptyTitle}>No dossiers yet</Text>
       <Text style={styles.emptySubtitle}>
         Every great startup begins with a question worth asking.
       </Text>
       <SketchButton
-        label="Start your first validation →"
+        label="Start your first validation"
         onPress={onNew}
         variant="primary"
         size="lg"
@@ -127,7 +133,7 @@ export default function DossiersScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator color={colors.teal} size="large" />
+          <ActivityIndicator color={colors.electric} size="large" />
           <Text style={styles.loadingText}>Loading dossiers...</Text>
         </View>
       </SafeAreaView>
@@ -137,7 +143,7 @@ export default function DossiersScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>tinyexperiments</Text>
+        <Text style={styles.headerTitle}>My Dossiers</Text>
         <Text style={styles.headerSub}>Your Validation Dossiers</Text>
       </View>
 
@@ -155,7 +161,7 @@ export default function DossiersScreen() {
           <RefreshControl
             refreshing={loading}
             onRefresh={onRefresh}
-            tintColor={colors.teal}
+            tintColor={colors.electric}
           />
         }
         renderItem={({ item }) => (
@@ -175,7 +181,7 @@ export default function DossiersScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.offWhite,
   },
   header: {
     paddingHorizontal: 20,
@@ -183,17 +189,17 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
   },
   headerTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: 28,
-    color: colors.teal,
+    color: colors.ink,
   },
   headerSub: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   list: {
     padding: 16,
@@ -214,9 +220,9 @@ const styles = StyleSheet.create({
   },
   ideaTitle: {
     fontFamily: 'Kalam_700Bold',
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.lg,
     color: colors.ink,
-    lineHeight: 22,
+    lineHeight: 26,
   },
   badge: {
     alignSelf: 'flex-start',
@@ -226,14 +232,15 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: fontSizes.xs,
-    fontFamily: typography.body,
+    fontFamily: 'System',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontWeight: '600',
   },
   problemPreview: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     lineHeight: 20,
   },
   scoreRow: {
@@ -244,24 +251,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: colors.paperAlt,
+    backgroundColor: colors.surfaceAlt,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
   },
   scorePillLabel: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   scorePillValue: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.base,
   },
   tapHint: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.placeholder,
     textAlign: 'right',
     marginTop: 4,
   },
@@ -282,9 +289,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   emptySubtitle: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 28,
@@ -299,19 +306,19 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   loadingText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   errorBanner: {
-    backgroundColor: colors.risk,
+    backgroundColor: colors.coral,
     padding: 12,
     margin: 16,
     borderRadius: 8,
   },
   errorText: {
     color: colors.white,
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
   },
 });

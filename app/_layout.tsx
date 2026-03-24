@@ -27,7 +27,7 @@ function RootLayoutNav() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator color={colors.teal} size="large" />
+        <ActivityIndicator color={colors.electric} size="large" />
       </View>
     );
   }
@@ -41,14 +41,14 @@ export default function RootLayout() {
   if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator color={colors.teal} size="large" />
+        <ActivityIndicator color={colors.electric} size="large" />
       </View>
     );
   }
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" backgroundColor={colors.paper} />
+      <StatusBar style="dark" backgroundColor={colors.white} />
       <RootLayoutNav />
     </SafeAreaProvider>
   );
@@ -57,7 +57,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },

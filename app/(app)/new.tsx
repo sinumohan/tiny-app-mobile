@@ -30,7 +30,7 @@ const STEPS = [
   {
     id: 2,
     question: 'What do people currently do instead of your solution?',
-    hint: 'Describe their existing workaround. If nothing exists, that\'s important data — say why.',
+    hint: 'Describe their existing workaround. If nothing exists, that\'s important data -- say why.',
     field: 'current_alternatives',
     minLength: 30,
   },
@@ -43,7 +43,7 @@ const STEPS = [
   },
   {
     id: 4,
-    question: 'Describe the SPECIFIC person who will pay — not a demographic.',
+    question: 'Describe the SPECIFIC person who will pay -- not a demographic.',
     hint: 'Not "small business owners". Try: "A freelance designer who has 3+ clients, earns $80k+, and loses sleep over unpaid invoices."',
     field: 'target_customer',
     minLength: 40,
@@ -57,7 +57,7 @@ const STEPS = [
   },
   {
     id: 6,
-    question: 'What is the ONE assumption — if wrong — that would kill this idea?',
+    question: 'What is the ONE assumption -- if wrong -- that would kill this idea?',
     hint: 'The thesis assumption. Usually around willingness to pay, market size, or behavior change. Say it plainly.',
     field: 'kill_assumption',
     minLength: 20,
@@ -180,7 +180,7 @@ export default function NewDossierScreen() {
               numberOfLines={5}
               minLength={step.minLength}
               required
-              placeholder="Write your answer here — be specific and concrete..."
+              placeholder="Write your answer here -- be specific and concrete..."
             />
           </SketchPaper>
 
@@ -188,14 +188,14 @@ export default function NewDossierScreen() {
           {fieldValue.length > 0 && !canProceed && (
             <View style={styles.vagueBanner}>
               <Text style={styles.vagueText}>
-                Keep going — specificity is your edge. ({fieldValue.length}/{step.minLength} chars)
+                Keep going -- specificity is your edge. ({fieldValue.length}/{step.minLength} chars)
               </Text>
             </View>
           )}
 
           {fieldValue.length > 0 && canProceed && (
             <View style={styles.okBanner}>
-              <Text style={styles.okText}>Good — that's a real answer.</Text>
+              <Text style={styles.okText}>Good -- that's a real answer.</Text>
             </View>
           )}
         </ScrollView>
@@ -203,7 +203,7 @@ export default function NewDossierScreen() {
         <View style={styles.navRow}>
           {currentStep > 0 && (
             <SketchButton
-              label="← Back"
+              label="Back"
               onPress={() => setCurrentStep((s) => s - 1)}
               variant="ghost"
               size="md"
@@ -212,7 +212,7 @@ export default function NewDossierScreen() {
           )}
           <View style={styles.navSpacer} />
           <SketchButton
-            label={isLast ? 'Submit →' : 'Next →'}
+            label={isLast ? 'Submit' : 'Next'}
             onPress={handleNext}
             variant="primary"
             size="md"
@@ -229,7 +229,7 @@ export default function NewDossierScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.offWhite,
   },
   kav: {
     flex: 1,
@@ -239,18 +239,18 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
   },
   headerTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.xl,
-    color: colors.teal,
+    color: colors.ink,
     marginBottom: 4,
   },
   stepLabel: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     marginBottom: 10,
   },
   stepIndicator: {
@@ -264,10 +264,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
   },
   stepDotDone: {
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
   },
   stepDotActive: {
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.electric,
   },
   scroll: {
     padding: 16,
@@ -292,41 +292,41 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   hint: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     lineHeight: 20,
     fontStyle: 'italic',
     marginBottom: 16,
     paddingLeft: 8,
     borderLeftWidth: 2,
-    borderLeftColor: colors.ruleLine,
+    borderLeftColor: colors.notebookLine,
   },
   vagueBanner: {
-    backgroundColor: '#FFF3E0',
+    backgroundColor: colors.amberLight,
     padding: 10,
     borderRadius: 6,
     marginTop: 8,
     borderLeftWidth: 3,
-    borderLeftColor: colors.yellow,
+    borderLeftColor: colors.amber,
   },
   vagueText: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: '#E65100',
+    color: colors.amberDark,
   },
   okBanner: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: colors.mintLight,
     padding: 10,
     borderRadius: 6,
     marginTop: 8,
     borderLeftWidth: 3,
-    borderLeftColor: colors.teal,
+    borderLeftColor: colors.mint,
   },
   okText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.teal,
+    color: colors.mintDark,
   },
   navRow: {
     flexDirection: 'row',
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
   },
   backButton: {
     minWidth: 80,

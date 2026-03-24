@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../lib/colors';
-import { typography, fontSizes } from '../../lib/typography';
+import { fontSizes } from '../../lib/typography';
 
 interface ScoreRingProps {
   score: number | null;
@@ -12,14 +12,14 @@ interface ScoreRingProps {
 
 function getScoreColor(score: number | null): string {
   if (score === null) return colors.border;
-  if (score >= 80) return colors.teal;
-  if (score >= 60) return colors.blue;
+  if (score >= 80) return colors.mint;
+  if (score >= 60) return colors.electric;
   if (score >= 40) return colors.amber;
-  return colors.risk;
+  return colors.coral;
 }
 
 function getScoreBand(score: number | null): string {
-  if (score === null) return '—';
+  if (score === null) return '--';
   if (score >= 80) return 'Strong';
   if (score >= 60) return 'Good';
   if (score >= 40) return 'Weak';
@@ -47,7 +47,7 @@ export function ScoreRing({ score, size = 'md', label, color }: ScoreRingProps) 
             borderRadius: dims.outer / 2,
             borderWidth: dims.stroke,
             borderColor: ringColor,
-            backgroundColor: colors.paper,
+            backgroundColor: colors.white,
           },
         ]}
       >
@@ -62,7 +62,7 @@ export function ScoreRing({ score, size = 'md', label, color }: ScoreRingProps) 
           ]}
         >
           <Text style={[styles.scoreText, { fontSize: dims.fontSize, color: ringColor }]}>
-            {score !== null ? score : '—'}
+            {score !== null ? score : '--'}
           </Text>
         </View>
       </View>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   label: {
     marginTop: 4,
     fontFamily: 'Kalam_400Regular',
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
   },
   band: {

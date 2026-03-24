@@ -45,13 +45,13 @@ function computeMSS(inputs: {
   const cpa = conversions > 0 ? spend / conversions : spend;
   const cpaScore = cpa <= 0 ? 0 : Math.min(25, Math.max(0, 25 - (cpa / 20) * 25));
 
-  // Audience Match (20 pts): from 1-5 rating → 0-20
+  // Audience Match (20 pts): from 1-5 rating -> 0-20
   const audienceScore = ((audienceMatchRating - 1) / 4) * 20;
 
-  // Intent Alignment (15 pts): from 1-5 rating → 0-15
+  // Intent Alignment (15 pts): from 1-5 rating -> 0-15
   const intentScore = ((intentAlignmentRating - 1) / 4) * 15;
 
-  // Engagement Quality (15 pts): from 1-5 rating → 0-15
+  // Engagement Quality (15 pts): from 1-5 rating -> 0-15
   const engagementScore = ((engagementRating - 1) / 4) * 15;
 
   return Math.round(conversionScore + cpaScore + audienceScore + intentScore + engagementScore);
@@ -185,7 +185,7 @@ function ExperimentWizard({
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>Design Experiment</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Text style={styles.closeBtnText}>✕</Text>
+            <Text style={styles.closeBtnText}>{'\u2715'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -214,7 +214,7 @@ function ExperimentWizard({
                 {topAssumption && (
                   <>
                     <Text style={styles.wizardHint}>
-                      Recommended — highest criticality, lowest evidence:
+                      Recommended -- highest criticality, lowest evidence:
                     </Text>
                     <TouchableOpacity
                       onPress={() => {
@@ -235,7 +235,7 @@ function ExperimentWizard({
                   minLength={20}
                 />
                 <SketchButton
-                  label="Next: Choose Brand →"
+                  label="Next: Choose Brand"
                   onPress={() => hypothesis.length > 10 && setStep('brand')}
                   variant="primary"
                   disabled={hypothesis.length < 10}
@@ -279,9 +279,9 @@ function ExperimentWizard({
                   placeholder="https://..."
                 />
                 <View style={styles.brandNavRow}>
-                  <SketchButton label="← Back" onPress={() => setStep('hypothesis')} variant="ghost" />
+                  <SketchButton label="Back" onPress={() => setStep('hypothesis')} variant="ghost" />
                   <SketchButton
-                    label="Next: Record Results →"
+                    label="Next: Record Results"
                     onPress={() => (selectedBrand || brandName) && setStep('results')}
                     variant="primary"
                     disabled={!selectedBrand && !brandName}
@@ -368,15 +368,15 @@ function ExperimentWizard({
                     <Text style={styles.mssPreviewLabel}>Estimated MSS</Text>
                     <ScoreRing score={mss} size="md" label="MSS" />
                     <Text style={styles.mssFormula}>
-                      CVR: {visitors ? ((+conversions / +visitors) * 100).toFixed(1) : '—'}% ·
-                      CPA: ${spend && conversions ? (+spend / +conversions).toFixed(2) : '—'}
+                      CVR: {visitors ? ((+conversions / +visitors) * 100).toFixed(1) : '--'}% {' '}
+                      CPA: ${spend && conversions ? (+spend / +conversions).toFixed(2) : '--'}
                     </Text>
                   </View>
                 )}
                 <View style={styles.brandNavRow}>
-                  <SketchButton label="← Back" onPress={() => setStep('brand')} variant="ghost" />
+                  <SketchButton label="Back" onPress={() => setStep('brand')} variant="ghost" />
                   <SketchButton
-                    label="Review →"
+                    label="Review"
                     onPress={() => {
                       if (validateResults()) setStep('review');
                     }}
@@ -398,12 +398,12 @@ function ExperimentWizard({
                   {landingUrl ? (
                     <>
                       <Text style={styles.reviewLabel}>Landing Page</Text>
-                      <Text style={[styles.reviewValue, { color: colors.blue }]}>{landingUrl}</Text>
+                      <Text style={[styles.reviewValue, { color: colors.electric }]}>{landingUrl}</Text>
                     </>
                   ) : null}
                   <Text style={styles.reviewLabel}>Results</Text>
                   <Text style={styles.reviewValue}>
-                    {visitors} visitors · {conversions} conversions · ${spend} spend
+                    {visitors} visitors | {conversions} conversions | ${spend} spend
                   </Text>
                   {mss !== null && (
                     <View style={styles.mssPreview}>
@@ -412,7 +412,7 @@ function ExperimentWizard({
                   )}
                 </SketchPaper>
                 <View style={styles.brandNavRow}>
-                  <SketchButton label="← Back" onPress={() => setStep('results')} variant="ghost" />
+                  <SketchButton label="Back" onPress={() => setStep('results')} variant="ghost" />
                   <SketchButton
                     label="Close Experiment"
                     onPress={handleSave}
@@ -462,15 +462,15 @@ export default function Phase2Screen() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>← Back</Text>
+          <Text style={styles.backBtnText}>Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Phase 2 — Experiments</Text>
+        <Text style={styles.headerTitle}>Phase 2 -- Experiments</Text>
         <View style={{ width: 60 }} />
       </View>
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator color={colors.teal} size="large" />
+          <ActivityIndicator color={colors.electric} size="large" />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.scroll}>
@@ -506,7 +506,10 @@ export default function Phase2Screen() {
                         styles.statusBadge,
                         exp.status === 'complete' && styles.statusBadgeDone,
                       ]}>
-                        <Text style={styles.statusBadgeText}>{exp.status}</Text>
+                        <Text style={[
+                          styles.statusBadgeText,
+                          exp.status !== 'complete' && { color: colors.muted },
+                        ]}>{exp.status}</Text>
                       </View>
                     </View>
                     {exp.mss != null && <ScoreRing score={exp.mss} size="sm" label="MSS" />}
@@ -549,7 +552,7 @@ export default function Phase2Screen() {
 
           {experiments.length === 0 && (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🧪</Text>
+              <Text style={styles.emptyIcon}>{'\uD83E\uDDEA'}</Text>
               <Text style={styles.emptyTitle}>No experiments yet</Text>
               <Text style={styles.emptyBody}>
                 Start testing your highest-criticality assumptions with real disposable brands.
@@ -579,7 +582,7 @@ export default function Phase2Screen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.offWhite,
   },
   header: {
     flexDirection: 'row',
@@ -589,12 +592,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    backgroundColor: colors.white,
   },
   backBtn: { padding: 4 },
   backBtnText: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.teal,
+    color: colors.electric,
+    fontWeight: '600',
   },
   headerTitle: {
     fontFamily: 'Kalam_700Bold',
@@ -611,13 +616,13 @@ const styles = StyleSheet.create({
   introTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.xl,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 8,
   },
   introBody: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     lineHeight: 20,
   },
   newExpBtn: { width: '100%', marginBottom: 20 },
@@ -633,26 +638,26 @@ const styles = StyleSheet.create({
   expBrand: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.md,
-    color: colors.teal,
+    color: colors.electric,
   },
   statusBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.paperAlt,
+    backgroundColor: colors.surfaceAlt,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
-  statusBadgeDone: { backgroundColor: colors.teal },
+  statusBadgeDone: { backgroundColor: colors.mint },
   statusBadgeText: {
     fontSize: fontSizes.xs,
-    fontFamily: typography.body,
+    fontFamily: 'System',
     color: colors.white,
     textTransform: 'uppercase',
   },
   expHypothesis: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     lineHeight: 20,
     marginBottom: 10,
   },
@@ -668,9 +673,9 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   expMetricLabel: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   emptyState: {
     alignItems: 'center',
@@ -685,16 +690,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   emptyBody: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
     lineHeight: 22,
   },
   // Wizard
   modalSafe: {
     flex: 1,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -712,7 +719,7 @@ const styles = StyleSheet.create({
   },
   closeBtn: {
     padding: 8,
-    backgroundColor: colors.paperAlt,
+    backgroundColor: colors.surfaceAlt,
     borderRadius: 20,
     width: 34,
     height: 34,
@@ -720,9 +727,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   closeBtnText: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.base,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   wizardTabs: {
     flexDirection: 'row',
@@ -739,12 +746,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   wizardTabActive: {
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
   },
   wizardTabText: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   wizardTabTextActive: {
     color: colors.white,
@@ -759,13 +766,13 @@ const styles = StyleSheet.create({
   wizardStepTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.xl,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 4,
   },
   wizardHint: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     fontStyle: 'italic',
   },
   brandOptions: {
@@ -782,16 +789,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   brandOptionSelected: {
-    borderColor: colors.teal,
-    backgroundColor: colors.teal,
+    borderColor: colors.electric,
+    backgroundColor: colors.electricLight,
   },
   brandOptionText: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.base,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   brandOptionTextSelected: {
-    color: colors.white,
+    color: colors.electric,
   },
   brandNavRow: {
     flexDirection: 'row',
@@ -803,24 +810,24 @@ const styles = StyleSheet.create({
   mssPreview: {
     alignItems: 'center',
     padding: 16,
-    backgroundColor: colors.paperAlt,
+    backgroundColor: colors.mintLight,
     borderRadius: 10,
     gap: 8,
   },
   mssPreviewLabel: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.mintDark,
   },
   mssFormula: {
     fontFamily: typography.mono,
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   validationError: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.xs,
-    color: '#D65A4E',
+    color: colors.coral,
     marginTop: -8,
   },
   ratingRow: {
@@ -829,9 +836,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ratingLabel: {
-    fontFamily: 'Kalam_400Regular',
+    fontFamily: 'System',
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     flex: 1,
   },
   ratingPips: {
@@ -842,17 +849,20 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
   ratingPipActive: {
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
+    borderColor: colors.electric,
   },
   ratingPipText: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.xs,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
   ratingPipTextActive: {
     color: colors.white,
@@ -861,13 +871,13 @@ const styles = StyleSheet.create({
   reviewLabel: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes.xs,
-    color: colors.teal,
+    color: colors.electric,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 2,
   },
   reviewValue: {
-    fontFamily: typography.body,
+    fontFamily: 'System',
     fontSize: fontSizes.base,
     color: colors.ink,
     marginBottom: 8,

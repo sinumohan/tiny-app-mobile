@@ -26,19 +26,19 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: typography.heading,
     fontSize: fontSizes.xl,
-    color: colors.teal,
+    color: colors.electric,
     marginBottom: 4,
   },
   underline: {
     height: 2,
     width: 40,
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
     borderRadius: 1,
     marginBottom: 6,
   },
   subtitle: {
     fontFamily: typography.body,
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
   },
 });

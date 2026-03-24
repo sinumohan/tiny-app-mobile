@@ -28,7 +28,7 @@ function PhaseNode({ label, sublabel, done, active }: PhaseNodeProps) {
         ]}
       >
         <Text style={[styles.circleText, (done || active) && styles.circleTextActive]}>
-          {done ? '✓' : label.charAt(0)}
+          {done ? '\u2713' : label.charAt(0)}
         </Text>
       </View>
       <Text style={[styles.nodeLabel, done && styles.nodeLabelDone]}>{label}</Text>
@@ -98,16 +98,16 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   circleDone: {
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
   },
   circleActive: {
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.electricLight,
     borderWidth: 2,
-    borderColor: colors.ink,
+    borderColor: colors.electric,
   },
   circleText: {
     fontSize: fontSizes.sm,
-    color: colors.inkMuted,
+    color: colors.muted,
     fontFamily: typography.subheading,
   },
   circleTextActive: {
@@ -116,16 +116,16 @@ const styles = StyleSheet.create({
   nodeLabel: {
     fontSize: fontSizes.xs,
     fontFamily: typography.subheading,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
   },
   nodeLabelDone: {
-    color: colors.teal,
+    color: colors.electric,
   },
   nodeSublabel: {
     fontSize: 10,
     fontFamily: typography.body,
-    color: colors.inkMuted,
+    color: colors.muted,
     textAlign: 'center',
   },
   connector: {
@@ -136,6 +136,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   connectorDone: {
-    backgroundColor: colors.teal,
+    backgroundColor: colors.electric,
   },
 });
