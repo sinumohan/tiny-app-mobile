@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
-import { supabase, Dossier } from '../lib/supabase';
+import { supabase, Signal } from '../lib/supabase';
 
-export function useDossiers(userId?: string) {
-  const [dossiers, setDossiers] = useState<Dossier[]>([]);
+export function useSignals(userId?: string) {
+  const [signals, setSignals] = useState<Signal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDossiers = useCallback(async () => {
+  const fetchSignals = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
     setError(null);
@@ -18,15 +18,15 @@ export function useDossiers(userId?: string) {
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      setDossiers(data ?? []);
+      setSignals(data ?? []);
     } catch (err: any) {
-      setError(err.message ?? 'Failed to load dossiers');
+      setError(err.message ?? 'Failed to load signals');
     } finally {
       setLoading(false);
     }
   }, [userId]);
 
-  const createDossier = async (payload: {
+  const createSignal = async (payload: {
     problem_statement: string;
     current_alternatives: string;
     behavior_change_reason: string;
@@ -51,13 +51,13 @@ export function useDossiers(userId?: string) {
       .single();
 
     if (!error && data) {
-      setDossiers((prev) => [data, ...prev]);
+      setSignals((prev) => [data, ...prev]);
     }
 
     return { data, error };
   };
 
-  const getDossier = async (id: string): Promise<{ data: Dossier | null; error: any }> => {
+  const getSignal = async (id: string): Promise<{ data: Signal | null; error: any }> => {
     const { data, error } = await supabase
       .from('dossiers')
       .select('*')
@@ -66,5 +66,5 @@ export function useDossiers(userId?: string) {
     return { data, error };
   };
 
-  return { dossiers, loading, error, fetchDossiers, createDossier, getDossier };
+  return { signals, loading, error, fetchSignals, createSignal, getSignal };
 }

@@ -46,7 +46,7 @@ function Connector({ done }: { done: boolean }) {
 export function PhaseProgress({ phase1Complete, phase2Complete, currentTVS, currentMSS }: PhaseProgressProps) {
   const phase1Active = !phase1Complete;
   const phase2Active = phase1Complete && !phase2Complete;
-  const dossierActive = phase1Complete && phase2Complete;
+  const signalActive = phase1Complete && phase2Complete;
 
   return (
     <View style={styles.container}>
@@ -66,9 +66,9 @@ export function PhaseProgress({ phase1Complete, phase2Complete, currentTVS, curr
         />
         <Connector done={phase2Complete} />
         <PhaseNode
-          label="Dossier"
-          done={dossierActive}
-          active={dossierActive}
+          label="Signal"
+          done={signalActive}
+          active={signalActive}
         />
       </View>
     </View>

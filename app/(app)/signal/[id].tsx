@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDossiers } from '../../../src/hooks/useDossiers';
+import { useSignals } from '../../../src/hooks/useSignals';
 import { useAuth } from '../../../src/hooks/useAuth';
-import { supabase, Dossier, Assumption, Experiment } from '../../../src/lib/supabase';
+import { supabase, Signal, Assumption, Experiment } from '../../../src/lib/supabase';
 import { SketchPaper } from '../../../src/components/ui/SketchPaper';
 import { ScoreRing } from '../../../src/components/ui/ScoreRing';
 import { PhaseProgress } from '../../../src/components/ui/PhaseProgress';
@@ -86,13 +86,13 @@ function ConfidenceTrajectory({ tvs, mss, ccs }: { tvs: number | null; mss: numb
   );
 }
 
-export default function DossierDetailScreen() {
+export default function SignalDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { session } = useAuth();
-  const { getDossier } = useDossiers(session?.user.id);
+  const { getSignal } = useSignals(session?.user.id);
 
-  const [dossier, setDossier] = useState<Dossier | null>(null);
+  const [signal, setSignal] = useState<Signal | null>(null);
   const [assumptions, setAssumptions] = useState<Assumption[]>([]);
   const [experiments, setExperiments] = useState<Experiment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,9 +103,9 @@ export default function DossierDetailScreen() {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: dErr } = await getDossier(id);
+      const { data, error: dErr } = await getSignal(id);
       if (dErr) throw new Error(dErr.message);
-      setDossier(data);
+      setSignal(data);
 
       // Assumptions
       const { data: aData } = await supabase
@@ -123,11 +123,11 @@ export default function DossierDetailScreen() {
         .order('created_at', { ascending: false });
       setExperiments(eData ?? []);
     } catch (err: any) {
-      setError(err.message ?? 'Failed to load dossier');
+      setError(err.message ?? 'Failed to load signal');
     } finally {
       setLoading(false);
     }
-  }, [id, getDossier]);
+  }, [id, getSignal]);
 
   useEffect(() => {
     loadData();
@@ -136,8 +136,8 @@ export default function DossierDetailScreen() {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Check out my validation dossier on TinyExperiments: https://tinyexperiments.me/dossier/${id}`,
-        url: `https://tinyexperiments.me/dossier/${id}`,
+        message: `Check out my signal on TinyExperiments: https://tinyexperiments.me/signal/${id}`,
+        url: `https://tinyexperiments.me/signal/${id}`,
       });
     } catch {
       Alert.alert('Share', 'Could not share at this time.');
@@ -149,25 +149,25 @@ export default function DossierDetailScreen() {
       <SafeAreaView style={styles.safe}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator color={colors.electric} size="large" />
-          <Text style={styles.loadingText}>Loading dossier...</Text>
+          <Text style={styles.loadingText}>Loading signal...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  if (error || !dossier) {
+  if (error || !signal) {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.loadingContainer}>
-          <Text style={styles.errorText}>{error ?? 'Dossier not found'}</Text>
+          <Text style={styles.errorText}>{error ?? 'Signal not found'}</Text>
           <SketchButton label="Go Back" onPress={() => router.back()} variant="secondary" />
         </View>
       </SafeAreaView>
     );
   }
 
-  const phase1Done = ['phase1_complete', 'phase2_pending', 'phase2_complete', 'complete'].includes(dossier.status);
-  const phase2Done = ['phase2_complete', 'complete'].includes(dossier.status);
+  const phase1Done = ['phase1_complete', 'phase2_pending', 'phase2_complete', 'complete'].includes(signal.status);
+  const phase2Done = ['phase2_complete', 'complete'].includes(signal.status);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -182,23 +182,23 @@ export default function DossierDetailScreen() {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Title */}
-        <Text style={styles.dossierTitle}>{dossier.idea_title || 'Untitled Dossier'}</Text>
+        <Text style={styles.signalTitle}>{signal.idea_title || 'Untitled Signal'}</Text>
 
         {/* Phase Progress */}
         <SketchPaper variant="card" style={styles.section}>
           <PhaseProgress
             phase1Complete={phase1Done}
             phase2Complete={phase2Done}
-            currentTVS={dossier.tvs}
-            currentMSS={dossier.mss}
+            currentTVS={signal.tvs}
+            currentMSS={signal.mss}
           />
         </SketchPaper>
 
         {/* Scores */}
-        <CCSFormula tvs={dossier.tvs} mss={dossier.mss} ccs={dossier.ccs} />
+        <CCSFormula tvs={signal.tvs} mss={signal.mss} ccs={signal.ccs} />
 
         {/* Confidence Trajectory */}
-        <ConfidenceTrajectory tvs={dossier.tvs} mss={dossier.mss} ccs={dossier.ccs} />
+        <ConfidenceTrajectory tvs={signal.tvs} mss={signal.mss} ccs={signal.ccs} />
 
         {/* Actions */}
         <View style={styles.actionsRow}>
@@ -235,12 +235,12 @@ export default function DossierDetailScreen() {
         <SectionHeader title="Idea Brief" style={styles.sectionHeader} />
         <SketchPaper variant="card" hasMarginLine style={styles.section}>
           {[
-            { label: 'Problem', value: dossier.problem_statement },
-            { label: 'Alternatives', value: dossier.current_alternatives },
-            { label: 'Behavior Change', value: dossier.behavior_change_reason },
-            { label: 'Target Customer', value: dossier.target_customer },
-            { label: 'Unfair Advantage', value: dossier.unfair_advantage },
-            { label: 'Kill Assumption', value: dossier.kill_assumption },
+            { label: 'Problem', value: signal.problem_statement },
+            { label: 'Alternatives', value: signal.current_alternatives },
+            { label: 'Behavior Change', value: signal.behavior_change_reason },
+            { label: 'Target Customer', value: signal.target_customer },
+            { label: 'Unfair Advantage', value: signal.unfair_advantage },
+            { label: 'Kill Assumption', value: signal.kill_assumption },
           ].map(({ label, value }) => (
             <View key={label} style={styles.briefRow}>
               <Text style={styles.briefLabel}>{label}</Text>
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32,
   },
-  dossierTitle: {
+  signalTitle: {
     fontFamily: 'Kalam_700Bold',
     fontSize: fontSizes['2xl'],
     color: colors.ink,

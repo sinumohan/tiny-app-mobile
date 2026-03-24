@@ -22,7 +22,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export interface Dossier {
+export interface Signal {
   id: string;
   user_id: string;
   idea_title: string;

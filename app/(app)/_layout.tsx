@@ -5,7 +5,7 @@ import { colors } from '../../src/lib/colors';
 
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
-    dossiers: '\uD83D\uDCD3',
+    signals: '\uD83D\uDCD3',
     new: '\uFF0B',
     profile: '\u25C9',
   };
@@ -44,8 +44,8 @@ export default function AppLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dossiers',
-          tabBarIcon: ({ focused }) => <TabIcon name="dossiers" focused={focused} />,
+          title: 'Signals',
+          tabBarIcon: ({ focused }) => <TabIcon name="signals" focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -56,7 +56,7 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="dossier/[id]"
+        name="signal/[id]"
         options={{
           href: null,
         }}

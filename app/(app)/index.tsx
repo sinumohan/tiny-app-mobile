@@ -11,17 +11,17 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../src/hooks/useAuth';
-import { useDossiers } from '../../src/hooks/useDossiers';
+import { useSignals } from '../../src/hooks/useSignals';
 import { SketchPaper } from '../../src/components/ui/SketchPaper';
 import { ScoreRing } from '../../src/components/ui/ScoreRing';
 import { PhaseProgress } from '../../src/components/ui/PhaseProgress';
 import { SketchButton } from '../../src/components/ui/SketchButton';
 import { colors } from '../../src/lib/colors';
 import { typography, fontSizes } from '../../src/lib/typography';
-import { Dossier } from '../../src/lib/supabase';
+import { Signal } from '../../src/lib/supabase';
 
-function StatusBadge({ status }: { status: Dossier['status'] }) {
-  const map: Record<Dossier['status'], { label: string; bg: string; text: string }> = {
+function StatusBadge({ status }: { status: Signal['status'] }) {
+  const map: Record<Signal['status'], { label: string; bg: string; text: string }> = {
     draft: { label: 'Draft', bg: colors.surfaceAlt, text: colors.muted },
     phase1_pending: { label: 'Analysing...', bg: colors.sky, text: colors.white },
     phase1_complete: { label: 'Phase 1 Done', bg: colors.mint, text: colors.white },
@@ -38,14 +38,14 @@ function StatusBadge({ status }: { status: Dossier['status'] }) {
   );
 }
 
-function DossierCard({ dossier, onPress }: { dossier: Dossier; onPress: () => void }) {
-  const phase1Done = ['phase1_complete', 'phase2_pending', 'phase2_complete', 'complete'].includes(dossier.status);
-  const phase2Done = ['phase2_complete', 'complete'].includes(dossier.status);
+function SignalCard({ signal, onPress }: { signal: Signal; onPress: () => void }) {
+  const phase1Done = ['phase1_complete', 'phase2_pending', 'phase2_complete', 'complete'].includes(signal.status);
+  const phase2Done = ['phase2_complete', 'complete'].includes(signal.status);
 
   const statusBorderColor =
-    dossier.status === 'complete' ? colors.statusComplete :
-    dossier.status === 'draft' ? colors.statusDraft :
-    dossier.status.startsWith('phase2') ? colors.mint :
+    signal.status === 'complete' ? colors.statusComplete :
+    signal.status === 'draft' ? colors.statusDraft :
+    signal.status.startsWith('phase2') ? colors.mint :
     colors.statusInProgress;
 
   return (
@@ -54,32 +54,32 @@ function DossierCard({ dossier, onPress }: { dossier: Dossier; onPress: () => vo
         <View style={styles.cardHeader}>
           <View style={styles.cardMeta}>
             <Text style={styles.ideaTitle} numberOfLines={2}>
-              {dossier.idea_title || 'Untitled Idea'}
+              {signal.idea_title || 'Untitled Idea'}
             </Text>
-            <StatusBadge status={dossier.status} />
+            <StatusBadge status={signal.status} />
           </View>
-          {dossier.ccs != null && (
-            <ScoreRing score={dossier.ccs} size="sm" label="CCS" />
+          {signal.ccs != null && (
+            <ScoreRing score={signal.ccs} size="sm" label="CCS" />
           )}
         </View>
 
-        {dossier.problem_statement ? (
+        {signal.problem_statement ? (
           <Text style={styles.problemPreview} numberOfLines={2}>
-            {dossier.problem_statement}
+            {signal.problem_statement}
           </Text>
         ) : null}
 
         <View style={styles.scoreRow}>
-          {dossier.tvs != null && (
+          {signal.tvs != null && (
             <View style={styles.scorePill}>
               <Text style={styles.scorePillLabel}>TVS</Text>
-              <Text style={[styles.scorePillValue, { color: colors.sky }]}>{dossier.tvs}</Text>
+              <Text style={[styles.scorePillValue, { color: colors.sky }]}>{signal.tvs}</Text>
             </View>
           )}
-          {dossier.mss != null && (
+          {signal.mss != null && (
             <View style={styles.scorePill}>
               <Text style={styles.scorePillLabel}>MSS</Text>
-              <Text style={[styles.scorePillValue, { color: colors.mint }]}>{dossier.mss}</Text>
+              <Text style={[styles.scorePillValue, { color: colors.mint }]}>{signal.mss}</Text>
             </View>
           )}
         </View>
@@ -87,8 +87,8 @@ function DossierCard({ dossier, onPress }: { dossier: Dossier; onPress: () => vo
         <PhaseProgress
           phase1Complete={phase1Done}
           phase2Complete={phase2Done}
-          currentTVS={dossier.tvs}
-          currentMSS={dossier.mss}
+          currentTVS={signal.tvs}
+          currentMSS={signal.mss}
         />
 
         <Text style={styles.tapHint}>Tap to open</Text>
@@ -101,7 +101,7 @@ function EmptyState({ onNew }: { onNew: () => void }) {
   return (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyNotebook}>{'\uD83D\uDCD3'}</Text>
-      <Text style={styles.emptyTitle}>No dossiers yet</Text>
+      <Text style={styles.emptyTitle}>No signals yet</Text>
       <Text style={styles.emptySubtitle}>
         Every great startup begins with a question worth asking.
       </Text>
@@ -116,25 +116,25 @@ function EmptyState({ onNew }: { onNew: () => void }) {
   );
 }
 
-export default function DossiersScreen() {
+export default function SignalsScreen() {
   const router = useRouter();
   const { session } = useAuth();
-  const { dossiers, loading, error, fetchDossiers } = useDossiers(session?.user.id);
+  const { signals, loading, error, fetchSignals } = useSignals(session?.user.id);
 
   useEffect(() => {
-    fetchDossiers();
-  }, [fetchDossiers]);
+    fetchSignals();
+  }, [fetchSignals]);
 
   const onRefresh = useCallback(() => {
-    fetchDossiers();
-  }, [fetchDossiers]);
+    fetchSignals();
+  }, [fetchSignals]);
 
-  if (loading && dossiers.length === 0) {
+  if (loading && signals.length === 0) {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator color={colors.electric} size="large" />
-          <Text style={styles.loadingText}>Loading dossiers...</Text>
+          <Text style={styles.loadingText}>Loading signals...</Text>
         </View>
       </SafeAreaView>
     );
@@ -143,8 +143,8 @@ export default function DossiersScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>My Dossiers</Text>
-        <Text style={styles.headerSub}>Your Validation Dossiers</Text>
+        <Text style={styles.headerTitle}>My Signals</Text>
+        <Text style={styles.headerSub}>Your signals</Text>
       </View>
 
       {error && (
@@ -154,7 +154,7 @@ export default function DossiersScreen() {
       )}
 
       <FlatList
-        data={dossiers}
+        data={signals}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         refreshControl={
@@ -165,9 +165,9 @@ export default function DossiersScreen() {
           />
         }
         renderItem={({ item }) => (
-          <DossierCard
-            dossier={item}
-            onPress={() => router.push(`/(app)/dossier/${item.id}`)}
+          <SignalCard
+            signal={item}
+            onPress={() => router.push(`/(app)/signal/${item.id}`)}
           />
         )}
         ListEmptyComponent={

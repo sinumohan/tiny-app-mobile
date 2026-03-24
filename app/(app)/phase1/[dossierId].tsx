@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../src/hooks/useAuth';
-import { useDossiers } from '../../../src/hooks/useDossiers';
+import { useSignals } from '../../../src/hooks/useSignals';
 import { supabase, Phase1Result } from '../../../src/lib/supabase';
 import { SketchPaper } from '../../../src/components/ui/SketchPaper';
 import { SketchButton } from '../../../src/components/ui/SketchButton';
@@ -146,7 +146,7 @@ export default function Phase1Screen() {
   const { dossierId } = useLocalSearchParams<{ dossierId: string }>();
   const router = useRouter();
   const { session } = useAuth();
-  const { getDossier } = useDossiers(session?.user.id);
+  const { getSignal } = useSignals(session?.user.id);
 
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<Phase1Result | null>(null);
@@ -160,7 +160,7 @@ export default function Phase1Screen() {
 
   const loadExistingResult = async () => {
     if (!dossierId) return;
-    const { data } = await getDossier(dossierId);
+    const { data } = await getSignal(dossierId);
     if (data?.phase1_result) {
       setResult(data.phase1_result);
       setTvs(data.tvs);
@@ -288,7 +288,7 @@ export default function Phase1Screen() {
                     ))}
                     {assumptions.length > 3 && (
                       <Text style={styles.moreAssumptions}>
-                        +{assumptions.length - 3} more in the dossier
+                        +{assumptions.length - 3} more in the signal
                       </Text>
                     )}
                   </SketchPaper>
@@ -310,8 +310,8 @@ export default function Phase1Screen() {
 
             <View style={styles.actionsRow}>
               <SketchButton
-                label="View Dossier"
-                onPress={() => router.push(`/(app)/dossier/${dossierId}`)}
+                label="View Signal"
+                onPress={() => router.push(`/(app)/signal/${dossierId}`)}
                 variant="secondary"
                 size="md"
                 style={styles.actionBtn}

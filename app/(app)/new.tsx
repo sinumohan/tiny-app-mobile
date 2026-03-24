@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../src/hooks/useAuth';
-import { useDossiers } from '../../src/hooks/useDossiers';
+import { useSignals } from '../../src/hooks/useSignals';
 import { SketchPaper } from '../../src/components/ui/SketchPaper';
 import { SketchButton } from '../../src/components/ui/SketchButton';
 import { SketchField } from '../../src/components/ui/SketchField';
@@ -90,10 +90,10 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
   );
 }
 
-export default function NewDossierScreen() {
+export default function NewSignalScreen() {
   const router = useRouter();
   const { session } = useAuth();
-  const { createDossier } = useDossiers(session?.user.id);
+  const { createSignal } = useSignals(session?.user.id);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -134,13 +134,13 @@ export default function NewDossierScreen() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const { data, error } = await createDossier(formData);
+      const { data, error } = await createSignal(formData);
       if (error) {
-        Alert.alert('Error', typeof error === 'string' ? error : (error as { message?: string }).message ?? 'Could not create dossier.');
+        Alert.alert('Error', typeof error === 'string' ? error : (error as { message?: string }).message ?? 'Could not create signal.');
         return;
       }
       if (data) {
-        router.replace(`/(app)/dossier/${data.id}`);
+        router.replace(`/(app)/signal/${data.id}`);
       }
     } finally {
       setLoading(false);
@@ -154,7 +154,7 @@ export default function NewDossierScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>New Validation Dossier</Text>
+          <Text style={styles.headerTitle}>New Signal</Text>
           <Text style={styles.stepLabel}>
             Step {currentStep + 1} of {STEPS.length}
           </Text>

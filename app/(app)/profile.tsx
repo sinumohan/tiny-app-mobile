@@ -103,8 +103,8 @@ export default function ProfileScreen() {
         <SectionHeader title="Plans" style={styles.sectionHeader} />
         <SketchPaper variant="card" style={styles.card}>
           {[
-            { plan: 'Free', features: ['3 dossiers', 'Phase 1 analysis', 'Basic scoring'] },
-            { plan: 'Pro', features: ['Unlimited dossiers', 'Phase 1 + 2', 'Full Dossier', 'Export PDF'] },
+            { plan: 'Free', features: ['3 signals', 'Phase 1 analysis', 'Basic scoring'] },
+            { plan: 'Pro', features: ['Unlimited signals', 'Phase 1 + 2', 'Full Signal', 'Export PDF'] },
             {
               plan: 'Founder+',
               features: ['Everything in Pro', 'Custom brand identity', 'Investor share links', 'Priority support'],
